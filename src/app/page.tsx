@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, RefreshCw, Share2 } from "lucide-react";
 import { toPng } from "html-to-image";
@@ -8,12 +8,22 @@ import { EnvelopeCard } from "@/components/envelope-card";
 
 type Letter = { date: string; letter: string; preview: string };
 
+const STORAGE_KEY = "letter-to-future-me:latest";
+
 export default function Home() {
   const [present, setPresent] = useState("");
   const [loading, setLoading] = useState(false);
   const [letter, setLetter] = useState<Letter | null>(null);
   const [error, setError] = useState<string | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Restore the last received letter after a refresh (client-side only).
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) setLetter(JSON.parse(saved) as Letter);
+    } catch {}
+  }, []);
 
   const submit = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -30,6 +40,9 @@ export default function Home() {
       if (!res.ok) setError(data.error ?? "Mail truck broke down.");
       else {
         setLetter(data);
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch {}
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error");
@@ -42,6 +55,9 @@ export default function Home() {
     setLetter(null);
     setError(null);
     setPresent("");
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
   };
 
   const download = async () => {

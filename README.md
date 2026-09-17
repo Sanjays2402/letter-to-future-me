@@ -4,6 +4,8 @@
 
 Tell us what&rsquo;s true today — what&rsquo;s hard, what&rsquo;s hopeful, what you&rsquo;re carrying. AI writes back a short, gentle letter dated one year from now. Downloadable as a postmarked envelope card on warm paper under a starry night.
 
+Your letter is kept in the browser, so a refresh never loses it — press “New letter” when you&rsquo;re ready to start over.
+
 ## Stack
 
 - Next.js 15 · App Router · TypeScript
